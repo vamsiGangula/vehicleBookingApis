@@ -5,13 +5,12 @@ exports.userData = async (req, res) => {
     const reqBody = req.body;
     await db.users.create(reqBody).then(async (result) => {
       result = constants._copy(result);
-      console.log(result,"=====result")
-      console.log(result.id,"====result.id")
       if (result) {
-        let userData=await db.vehicle_bookings.findOrCreate({where:{user_id:result.id},
-        defaults:{user_id:result.id}});
-        userData=constants._copy(userData);
-        console.log(userData,"=========>userData<==========")
+        let userData = await db.vehicle_bookings.findOrCreate({
+          where: { user_id: result.id },
+          defaults: { user_id: result.id },
+        });
+        userData = constants._copy(userData);
         return res.json({
           result: constants.responseObj(
             true,
