@@ -4,46 +4,58 @@ exports.bookingData = async (req, res) => {
   try {
     let reqBody = req.body;
     let reqObj = {
-      model_name: reqBody.vehicle_name,
+      model_name: reqBody.model_name,
       start_date: reqBody.start_date,
       end_date: reqBody.end_date,
+      model_id:reqBody.model_id,
+      booking_status:true
     };
-    await db.vehicle_bookings
-      .update(
-        reqObj,
-        {
-            where:{user_id:req.headers.userid}
-        }
-      )
-      .then(async (result) => {
-        result = constants._copy(result);
-        console.log(result, "====res ultimately");
-        if (result[0] == 1) {
-          await db.vehicle_bookings
-            .findOne({ where:{user_id: req.headers.userid },attributes:["user_id","wheels","vehicle_type","model_name","start_date","end_date"]})
-            .then(async (result) => {
-              result = constants._copy(result);
-              console.log(result, "====res");
-              return res.json({
-                result: constants.responseObj(
-                  true,
-                  200,
-                  constants.messages.bookedSuccesfully,
-                  false,
-                  result
-                ),
-              });
-            });
-        } else {
-          return res.json({
-            result: constants.responseObj(
-              true,
-              204,
-              constants.messages.noDataFound
-            ),
-          });
-        }
+    let reqHeaders=req.headers;
+    let userData=await db.vehicle_bookings.findOne({where:{user_id:reqHeaders.userid, booking_status:false}});
+    if(userData != null){
+      let  result=await db.vehicle_bookings
+         .update(
+           reqObj,
+           {
+               where:{user_id:req.headers.userid,booking_status:false}
+           }
+         )
+           result = constants._copy(result);
+           console.log(result, "====res ultimately");
+           if (result[0] == 1) {
+             await db.vehicle_bookings
+               .findOne({ where:{user_id: req.headers.userid },attributes:["user_id","wheels","vehicle_type_name","model_name","start_date","end_date"]})
+               .then(async (result) => {
+                 result = constants._copy(result);
+                 console.log(result, "====res");
+                 return res.json({
+                   result: constants.responseObj(
+                     true,
+                     200,
+                     constants.messages.bookedSuccesfully,
+                     false,
+                     result
+                   ),
+                 });
+               });
+           } else {
+             return res.json({
+               result: constants.responseObj(
+                 false,
+                 500,
+                 constants.messages.noUpdate
+               ),
+             });
+           }
+    }else{
+      return res.json({
+        result: constants.responseObj(
+          true,
+          204,
+          constants.messages.noDataFound
+        ),
       });
+    }
   } catch (error) {
     console.log(error, "=====>errrors====");
     return res.json({

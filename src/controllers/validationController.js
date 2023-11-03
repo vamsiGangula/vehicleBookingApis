@@ -68,20 +68,30 @@ exports.validategetModels=async(req,res,next)=>{
 exports.valiDateBookingData=async(req,res,next)=>{
   let reqBody=req.body;
   let reqHeaders=req.headers;
-  let schema=["vehicle_name","start_date","end_date"];
+  let schema=["model_name","start_date","end_date","model_id"];
   let headerSchema=["userid"];
   validateHeaders(reqHeaders,headerSchema,(err,resp)=>{
     if(err){
       res.json(response(false, 400, false, err));
     }else{
-      validations(reqBody,schema,(err,resp)=>{
+      validations(reqBody,schema,async(err,resp)=>{
         if(err){
           res.json(response(false, 400, false, err));
         }else{
+          console.log(reqBody.end_date,"======reqBody.end_date")
+          console.log(reqBody.start_date,"======reqBody.start_date")
           if(!reqBody.end_date>reqBody.start_date){
             res.json(response(false, 400, false, "Start date must be before the end date"));
+          }else{
+            let modelsTypes= await db.vehicle_models.findOne({where:{model_name:reqBody.model_name.toLowerCase(),id:reqBody.model_id}});
+            modelsTypes=_copy(modelsTypes);
+            console.log(modelsTypes,"=====modelsTypes");
+            if(modelsTypes==null){
+              res.json(response(false, 400, false, "No Models found"));
+            }else{
+              next();
+            }
           }
-          next();
         }
       })
     }
