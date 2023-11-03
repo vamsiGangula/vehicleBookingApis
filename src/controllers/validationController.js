@@ -78,16 +78,16 @@ exports.valiDateBookingData=async(req,res,next)=>{
         if(err){
           res.json(response(false, 400, false, err));
         }else{
-          console.log(reqBody.end_date,"======reqBody.end_date")
-          console.log(reqBody.start_date,"======reqBody.start_date")
-          if(!reqBody.end_date>reqBody.start_date){
+          const startDate = new Date(reqBody.start_date);
+          const endDate = new Date(reqBody.end_date);
+          if (startDate >= endDate) {
             res.json(response(false, 400, false, "Start date must be before the end date"));
           }else{
-            let modelsTypes= await db.vehicle_models.findOne({where:{model_name:reqBody.model_name.toLowerCase(),id:reqBody.model_id}});
+            let modelsTypes= await db.vehicle_models.findOne({where:{model_name:reqBody.model_name.toLowerCase(),id:reqBody.model_id,is_active:1}});
             modelsTypes=_copy(modelsTypes);
             console.log(modelsTypes,"=====modelsTypes");
             if(modelsTypes==null){
-              res.json(response(false, 400, false, "No Models found"));
+              res.json(response(false, 400, false, "No Vehicle found"));
             }else{
               next();
             }
