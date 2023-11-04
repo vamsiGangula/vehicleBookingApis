@@ -1,12 +1,12 @@
 const constants = require("../../constants/index");
-const db = require("../models");
+const { Users, VehicleBookings } = require("../../imports");
 exports.userData = async (req, res) => {
   try {
     const reqBody = req.body;
-    await db.users.create(reqBody).then(async (result) => {
+    await Users.create(reqBody).then(async (result) => {
       result = constants._copy(result);
       if (result) {
-        let userData = await db.vehicle_bookings.findOrCreate({
+        let userData = await VehicleBookings.findOrCreate({
           where: { user_id: result.id },
           defaults: { user_id: result.id },
         });

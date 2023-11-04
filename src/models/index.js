@@ -39,8 +39,9 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-db.vehicle_types = require('./vehicleTypes')(sequelize, Sequelize);
-db.vehicle_models = require('./vehicleModels')(sequelize, Sequelize);
-db.vehicle_bookings = require('./vehicleBooking')(sequelize, Sequelize);
-db.users = require('./user')(sequelize, Sequelize);
+
+db.vehicletypes = require('./vehicleTypes')(sequelize, Sequelize);
+db.vehiclemodels = require('./vehicleModels')(sequelize, Sequelize);
+db.user = require('./user')(sequelize, Sequelize);
+db.vehiclebookings = require('./vehicleBooking')(sequelize, Sequelize);
 module.exports =db;

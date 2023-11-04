@@ -7,7 +7,7 @@ const messages={
     wheelsFetched:"wheels Fetched successfully",
     noDataFound:"No Data Found",
     carsDataFound:"cars Data Found",
-    bikeDataFound:"bike Data Found",
+    bikeDataFound:"Vehicle Data Found",
     ModelsFound:"Models Found Successfully",
     bookedSuccesfully:"Booking Successfully",
     userNotFound:"user Not Found",

@@ -1,5 +1,6 @@
 const constants = require("../../constants/index");
-const db = require("../models");
+const { VehicleBookings, VehicleModels } = require("../../imports");
+
 exports.bookingData = async (req, res) => {
   try {
     let reqBody = req.body;
@@ -11,16 +12,16 @@ exports.bookingData = async (req, res) => {
       booking_status: true,
     };
     let reqHeaders = req.headers;
-    let userData = await db.vehicle_bookings.findOne({
+    let userData = await VehicleBookings.findOne({
       where: { user_id: reqHeaders.userid, booking_status: false },
     });
     if (userData != null) {
-      let result = await db.vehicle_bookings.update(reqObj, {
+      let result = await VehicleBookings.update(reqObj, {
         where: { user_id: req.headers.userid, booking_status: false },
       });
       result = constants._copy(result);
       if (result[0] == 1) {
-        await db.vehicle_models.update(
+        await VehicleModels.update(
           { is_active: 0 },
           {
             where: {
@@ -29,7 +30,7 @@ exports.bookingData = async (req, res) => {
             },
           }
         );
-        await db.vehicle_bookings
+        await VehicleBookings
           .findOne({
             where: { user_id: req.headers.userid },
             attributes: [

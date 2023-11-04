@@ -1,5 +1,6 @@
 const { validations, response, validateHeaders, _copy } = require("../../constants");
-const db = require("../models");
+const { VehicleTypes, VehicleModels } = require("../../imports");
+// const db = require("../models");
 
 exports.validateUserData = async (req, res, next) => {
   const reqBody = req.body;
@@ -52,9 +53,9 @@ exports.validategetModels=async(req,res,next)=>{
         if(err){
           res.json(response(false, 400, false, err));
         }else{
-         let vehiclesTypes= await db.vehicle_types.findOne({where:{name:reqBody.vehicle_type,id:reqBody.vehicle_type_id}});
+         let vehiclesTypes= await VehicleTypes.findOne({where:{name:reqBody.vehicle_type,id:reqBody.vehicle_type_id}});
          vehiclesTypes=_copy(vehiclesTypes);
-         console.log(vehiclesTypes,"=====vehiclesTypes")
+        //  console.log(vehiclesTypes,"=====vehiclesTypes")
          if(vehiclesTypes==null){
           res.json(response(false, 400, false, "No Vehicle Types found"));
          }else{
@@ -83,9 +84,9 @@ exports.valiDateBookingData=async(req,res,next)=>{
           if (startDate >= endDate) {
             res.json(response(false, 400, false, "Start date must be before the end date"));
           }else{
-            let modelsTypes= await db.vehicle_models.findOne({where:{model_name:reqBody.model_name.toLowerCase(),id:reqBody.model_id,is_active:1}});
+            let modelsTypes= await VehicleModels.findOne({where:{model_name:reqBody.model_name.toLowerCase(),id:reqBody.model_id,is_active:1}});
             modelsTypes=_copy(modelsTypes);
-            console.log(modelsTypes,"=====modelsTypes");
+            // console.log(modelsTypes,"=====modelsTypes");
             if(modelsTypes==null){
               res.json(response(false, 400, false, "No Vehicle found"));
             }else{
